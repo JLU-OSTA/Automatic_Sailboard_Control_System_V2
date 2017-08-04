@@ -1,0 +1,48 @@
+pinMode(beep,OUTPUT);
+pinMode(pwm_m[0],OUTPUT);
+pinMode(pwm_m[1],OUTPUT);
+digitalWrite(beep,LOW);
+analogWrite(pwm_m[0],0);
+analogWrite(pwm_m[1],0);
+lcd.begin(lcd_col,lcd_row);
+Wire.begin();
+accelgyro.initialize();
+for(in=0;in<angle_sumup_b;in++)
+{
+	if(in>=angle_sumup_a)
+	angle_sumup();
+	delay(5);
+}
+gz0/=(angle_sumup_b-angle_sumup_a);
+agz=0.00;
+in=1;
+level=0;
+sumup=360;
+while(abs(sumup/70.00-ang)>0.1)
+{
+	if(in%71==0)
+	{
+		sumup=0;
+		ang=720;
+	}
+	else
+	{
+		getangle();
+		sumup+=ang;
+		delay(3);
+	}
+	in++;
+}
+delay(100);
+sumup=0;
+for(in=0;in<200;in++)
+{
+	getangle();
+	sumup+=ang;
+}
+level=sumup/200-water_level;
+sumup=0;
+angle_inited();
+//PWM0.SetOutputLimits(80,120);
+PWM0.SetMode(AUTOMATIC);
+analogWrite(pwm_m[0],output);
